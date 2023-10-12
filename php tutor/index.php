@@ -22,49 +22,55 @@
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     
-
-    <form action= "<?php htmlspecialchars($_SERVER["PHP_SELF"])?>"  method="post">
     <div class="container">
+    <form action= "<?php htmlspecialchars($_SERVER["PHP_SELF"])?>"  method="post">
+    
     <div class="mb-3">
       <label for="formGroupExampleInput" class="form-label">Username:</label>
-      <input type="text" class="form-control" id="formGroupExampleInput" placeholder="Enter Username"
-      name="username">
+      <input type="text" class="form-control" id="formGroupExampleInput" placeholder="Enter Username" name="username">
     </div>
     <div class="mb-3">
       <label for="formGroupExampleInput2" class="form-label">Password:</label>
-      <input type="password" class="form-control" id="formGroupExampleInput2" placeholder="Enter password"
-      name="pass">
+      <input type="password" class="form-control" id="formGroupExampleInput2" placeholder="Enter password" name="pass">
     </div>
         <input class="btn btn-outline-success" type="submit" name="login" value="Register">
-        
-    </div>
+    
     </form>
+
+    <?php
+        if($_SERVER["REQUEST_METHOD"]=="POST"){
+            $username = filter_input(INPUT_POST,"username",FILTER_SANITIZE_SPECIAL_CHARS);
+            $password = filter_input(INPUT_POST,"password",FILTER_SANITIZE_SPECIAL_CHARS);
+
+            if(empty($username)){
+                echo "Username not entered!";
+            }elseif($password){
+                echo "Password is Missing!";
+            }else{
+                $hash = password_hash($password,PASSWORD_BCRYPT);
+                $sql = "INSERT INTO users(user,password)
+                        VALUES('$username','$hash')";
+                try{
+                        if(mysqli_query($conn,$sql) === true){
+                            echo "Registration Successful!";
+                        }else{
+                            throw new Exception($e);
+                        }
+                    }catch(Exception $e){
+                        echo "Username already exist <br> ". $e->getMessage();
+                    }
+                // if(mysqli_query($conn,$sql)){
+                //     echo "Registration Successful!";
+                // }else{
+                //     echo "Username is already taken";
+                // }
+            }
+        }
+        mysqli_close($conn);
+    ?>
+
+    </div>
 
 </body>
 </html>
 
-
-<?php
-    if($_SERVER["REQUEST_METHOD"]=="POST"){
-        $username = filter_input(INPUT_POST,"username",FILTER_SANITIZE_SPECIAL_CHARS);
-        $password = filter_input(INPUT_POST,"password",FILTER_SANITIZE_SPECIAL_CHARS);
-
-        if(empty($username)){
-            echo "Username not entered!";
-        }elseif($password){
-            echo "Password is Missing!";
-        }else{
-            $hash = password_hash($password,PASSWORD_BCRYPT);
-            $sql = "INSERT INTO users(user,password)
-                    VALUES('$username','$hash')";
-
-            if (mysqli_query($conn, $sql)) {
-                echo "Registration Successful!";
-            } else {
-                echo "Username is already taken";
-            }
-        }
-    }
-
-    mysqli_close($conn);
-?>
