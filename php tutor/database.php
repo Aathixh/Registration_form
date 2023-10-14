@@ -2,7 +2,7 @@
     $db_server = "localhost";
     $db_user = "root";
     $db_pass = "";
-    $db_name = "registration_form";
+    $db_name = "registration-form";
     $conn = "";
 
     try{
