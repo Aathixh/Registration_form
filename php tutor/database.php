@@ -1,8 +1,8 @@
 <?php
     $db_server = "localhost";
     $db_user = "root";
-    $db_pass = "Password1!";
-    $db_name = "registration-form";
+    $db_pass = "";
+    $db_name = "registration_form";
     $conn = "";
 
     try{
